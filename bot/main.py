@@ -22,6 +22,7 @@ logging.basicConfig(level=logging.INFO)
 authorized_users = {}
 
 
+# Обработчик команды /auth для авторизации пользователя через Telegram
 @dp.message(Command("auth"))
 async def auth_user(message: Message, state: FSMContext):
     chat_id = message.from_user.id
@@ -41,6 +42,7 @@ async def auth_user(message: Message, state: FSMContext):
         await message.answer("Ошибка при регистрации пользователя.")
 
 
+# Обработчик команды /notes для получения списка заметок
 @dp.message(Command("notes"))
 async def get_notes(message: Message):
     chat_id = message.from_user.id
@@ -64,6 +66,7 @@ async def get_notes(message: Message):
         await message.answer("Ошибка при получении заметок.")
 
 
+# Обработчик команды /new_note для создания новой заметки
 @dp.message(Command("new_note"))
 async def create_note(message: Message, state: FSMContext):
     chat_id = message.from_user.id
@@ -77,6 +80,7 @@ async def create_note(message: Message, state: FSMContext):
     await state.set_state("awaiting_title")
 
 
+# Обработчик для получения заголовка заметки
 @dp.message(F.state == "awaiting_title")
 async def process_title(message: Message, state: FSMContext):
     await state.update_data(title=message.text)
@@ -84,6 +88,7 @@ async def process_title(message: Message, state: FSMContext):
     await state.set_state("awaiting_content")
 
 
+# Обработчик для получения содержания заметки и создания заметки
 @dp.message(F.state == "awaiting_content")
 async def process_content(message: Message, state: FSMContext):
     chat_id = message.from_user.id
@@ -104,6 +109,7 @@ async def process_content(message: Message, state: FSMContext):
     await state.clear()
 
 
+# Обработчик команды /search_notes для поиска заметок по тегам
 @dp.message(Command("search_notes"))
 async def search_notes(message: Message, state: FSMContext):
     chat_id = message.from_user.id
@@ -117,6 +123,7 @@ async def search_notes(message: Message, state: FSMContext):
     await state.set_state("awaiting_tags")
 
 
+# Обработчик для получения тегов и поиска заметок
 @dp.message(F.state == "awaiting_tags")
 async def process_tags(message: Message, state: FSMContext):
     chat_id = message.from_user.id
