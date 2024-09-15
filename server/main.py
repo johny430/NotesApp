@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy.engine import url
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import auth
@@ -52,7 +51,7 @@ async def update_note(note_id: int, title: str, content: str, tags: list = [], d
 
 @app.delete("/notes/{note_id}")
 async def delete_note(note_id: int, db: AsyncSession = Depends(db.get_db), current_user: models.User = Depends(auth.get_current_user)):
-    note = await url.get_note_by_id(db, note_id, current_user.id)
+    note = await endpoints.get_note_by_id(db, note_id, current_user.id)
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
     await endpoints.delete_note(db, note)
